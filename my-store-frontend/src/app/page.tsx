@@ -1,5 +1,7 @@
-import AddProductPage from "../components/add-product-page";
+//import AddProductPage from "../components/add-product-page";
+import MenuProductsPage from "@/components/menu-products";
 
 export default function Page() {
-  return <AddProductPage />;
+  return <MenuProductsPage />;
+  //return <AddProductPage />;
 }
