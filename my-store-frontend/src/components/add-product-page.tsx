@@ -1,8 +1,7 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Package, CheckCircle, AlertCircle } from "lucide-react";
+import { authService } from "@/components/jwt-token";
 
 interface ProductData {
   id: number;
@@ -24,7 +24,6 @@ interface ProductData {
   quantidade: number;
   marca: string;
 }
-
 
 export default function AddProductPage() {
   const [formData, setFormData] = useState<ProductData>({
@@ -42,9 +41,11 @@ export default function AddProductPage() {
     text: string;
   } | null>(null);
 
+  // Usar uma referência para evitar envios múltiplos
+  const isSubmitting = useRef(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -56,69 +57,34 @@ export default function AddProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting.current) return; // Previne clique duplo
+
+    isSubmitting.current = true;
     setIsLoading(true);
     setMessage(null);
 
-    const handleJwt = async () => {
-      try {
-        const resp = await fetch("http://192.168.0.19:8090/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: "figas",
-            password: "1234",
-          }),
-          credentials: "include",
-        });
-
-        if (!resp.ok) {
-          throw new Error("Erro ao obter token de autenticação");
-        }
-
-        const data = await resp.json();
-        localStorage.setItem("jwt_token", data.token);
-        alert("Login realizado com sucesso!");
-        return data.token;
-      } catch (error) {
-        console.error(error);
-        alert("Erro ao realizar login");
-      }
-    };
-
     try {
-      // Get JWT token from localStorage (adjust based on your storage method)
-      //const token = localStorage.getItem("jwt_token");
-      //const token = localStorage.getItem("jwt_token");
-      const token = localStorage.getItem("jwt_token") || (await handleJwt());
-
-      if (!token) {
-        throw new Error("Token de autenticação não encontrado");
-      }
-
-      const response = await fetch(
+      // 3. Use o authService para fazer a requisição!
+      const response = await authService.makeAuthenticatedRequest(
         "http://192.168.0.19:8090/produto/adicionarProduto",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
           body: JSON.stringify(formData),
-          credentials: "include",
-        },
+        }
       );
 
       if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+        // A sua classe AuthService já tentou renovar o token se deu 401.
+        // Se ainda não deu certo, o erro é outro.
+        const errorText = await response.text();
+        throw new Error(`Erro no servidor: ${response.status} - ${errorText || response.statusText}`);
       }
 
-      const result = await response.json();
+      await response.json();
 
       setMessage({ type: "success", text: "Produto adicionado com sucesso!" });
 
-      // Reset form
+      // Resetar o formulário
       setFormData({
         id: 0,
         nome: "",
@@ -127,17 +93,20 @@ export default function AddProductPage() {
         quantidade: 0,
         marca: "",
       });
+
     } catch (error) {
-      console.error("Erro ao adicionar produto:", error, "{error.statusText}");
+      console.error("Erro ao adicionar produto:", error);
       setMessage({
         type: "error",
-        text:
-          error instanceof Error ? error.message : "Erro ao adicionar produto",
+        text: error instanceof Error ? error.message : "Ocorreu um erro desconhecido",
       });
     } finally {
       setIsLoading(false);
+      isSubmitting.current = false;
     }
   };
+  
+
 
   const isFormValid =
     formData.nome &&

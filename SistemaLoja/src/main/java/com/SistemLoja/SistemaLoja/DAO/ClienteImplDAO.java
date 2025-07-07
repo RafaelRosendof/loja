@@ -56,7 +56,8 @@ public class ClienteImplDAO implements CustomDAOCliente{
     @Override
     @Transactional
     public ClienteEntity CriarCliente(ClienteEntity cliente){
-        em.merge(cliente); //verificar pois o persist deu pau no produto
+        //em.merge(cliente); 
+        em.persist(cliente);
         return cliente;
     }
 
