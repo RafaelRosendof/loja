@@ -16,5 +16,6 @@ public interface CustomProdDAO {
     ProdutoEntity CriarProduto(ProdutoEntity produto);
     ProdutoEntity updatePrice(BigDecimal price , int id);
     ProdutoEntity updateQuantidade(int value , int id);
+    ProdutoEntity updateProduct(int id, ProdutoEntity produto);
     
 }

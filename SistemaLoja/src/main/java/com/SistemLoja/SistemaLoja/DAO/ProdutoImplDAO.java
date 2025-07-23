@@ -65,4 +65,21 @@ public class ProdutoImplDAO implements CustomProdDAO{
 
         return em.find(ProdutoEntity.class, id);
     }
+
+    @Override
+    @Transactional
+    public ProdutoEntity updateProduct(int id, ProdutoEntity produto) {
+        ProdutoEntity existingProduct = em.find(ProdutoEntity.class, id);
+        if (existingProduct != null) {
+            existingProduct.setNome(produto.getNome());
+            existingProduct.setCategoria(produto.getCategoria());
+            existingProduct.setMarca(produto.getMarca());
+            existingProduct.setPrice(produto.getPrice());
+            existingProduct.setQuantidade(produto.getQuantidade());
+            em.merge(existingProduct);
+            return existingProduct;
+        }
+        return null;
+    }
+
 }

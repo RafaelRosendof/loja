@@ -45,6 +45,10 @@ public class ProdutoService{
         return customDAOProduto.updateQuantidade(value , id);
     }
 
+    public ProdutoEntity updateProduct(int id, ProdutoEntity produto) {
+        return customDAOProduto.updateProduct(id, produto);
+    }
+
     public ProdutoEntity findById(int id){
         return produtoDAO.findById(id).orElse(null);
     }

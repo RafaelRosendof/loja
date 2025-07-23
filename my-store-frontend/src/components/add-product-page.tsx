@@ -204,7 +204,7 @@ export default function AddProductPage() {
                     name="price"
                     type="number"
                     step="0.01"
-                    min="0"
+                    min="0.01"
                     value={formData.price || ""}
                     onChange={handleInputChange}
                     placeholder="0.00"

@@ -9,9 +9,9 @@ import { Package, PlusCircle, Trash2, Search, Edit, ArrowLeft } from "lucide-rea
 import AddProductPage from "@/components/add-product-page";
 // Assuming you have these other components created in your components folder
 // If not, I will provide simple placeholders for them.
-//import DeleteProductPage from "@/components/delete-product";
+import DeleteProductPage from "@/components/delete-product";
 //import FindProductPage from "@/components/find-product";
-//import ModifyProductPage from "@/components/modify-product";
+import ModifyProductPage from "@/components/update-product-page";
 
 
 type Page = "menu" | "add" | "delete" | "find" | "modify";

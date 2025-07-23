@@ -101,6 +101,20 @@ public class ProdutoRestController {
         return produto;
     }
 
+    @PutMapping("/updateProduto/{id}")
+    public ProdutoEntity updateProduct(
+        @PathVariable int id,
+        @RequestBody ProdutoEntity produto
+    ) {
+        ProdutoEntity updatedProduto = produtoService.updateProduct(id, produto);
+
+        if (updatedProduto == null) {
+            throw new RuntimeException("Produto não encontrado - " + id);
+        }
+
+        return updatedProduto;
+    }
+
     @DeleteMapping("/delete/{produtoId}")
     public void deleteProduto(@PathVariable int produtoId) {
         ProdutoEntity produto = produtoService.findById(produtoId);
