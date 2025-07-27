@@ -6,12 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Package, PlusCircle, Trash2, Search, Edit, ArrowLeft } from "lucide-react";
 
 // Import your page components
-import AddProductPage from "@/components/add-product-page";
+import AddProductPage from "@/components/products/add-product-page";
 // Assuming you have these other components created in your components folder
 // If not, I will provide simple placeholders for them.
-import DeleteProductPage from "@/components/delete-product";
-//import FindProductPage from "@/components/find-product";
-import ModifyProductPage from "@/components/update-product-page";
+import DeleteProductPage from "@/components/products/delete-product";
+import FindProductPage from "@/components/products/find-product";
+import ModifyProductPage from "@/components/products/update-product-page";
 
 
 type Page = "menu" | "add" | "delete" | "find" | "modify";

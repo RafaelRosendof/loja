@@ -125,6 +125,17 @@ public class ProdutoRestController {
 
         produtoService.deleteById(produtoId);
     }
+
+    @GetMapping("/FindProduto/{id}")
+    public ProdutoEntity findProdutoEntity(@PathVariable int id) {
+        ProdutoEntity produto = produtoService.findById(id);
+
+        if (produto == null) {
+            throw new RuntimeException("Produto não encontrado - " + id);
+        }
+
+        return produto;
+    }
 }
 /*
  * {
