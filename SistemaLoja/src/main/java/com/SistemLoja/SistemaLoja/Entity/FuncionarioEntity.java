@@ -3,6 +3,10 @@ package com.SistemLoja.SistemaLoja.Entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.SistemLoja.SistemaLoja.Aux.CryptoConvert;
+
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,24 +29,31 @@ public class FuncionarioEntity{
     @Column(name = "id")
     private int id;
 
+    @Convert(converter = CryptoConvert.class)
     @Column(name = "nome")
     private String nome;
 
+    @Convert(converter = CryptoConvert.class)
     @Column(name = "cpf")
     private String cpf;
 
+    @Convert(converter = CryptoConvert.class)
     @Column(name = "email")
     private String email;
 
+    @Convert(converter = CryptoConvert.class)
     @Column(name = "login")
     private String login;
 
+    @Convert(converter = CryptoConvert.class)
     @Column(name = "senha")
     private String senha;
 
+    @Convert(converter = CryptoConvert.class)
     @Column(name = "cargo")
     private String cargo;
 
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "Funcionario_Role" , joinColumns = @JoinColumn(name = "funcionario_id") , inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
