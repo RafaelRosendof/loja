@@ -1,9 +1,8 @@
 package com.SistemLoja.SistemaLoja.Rest;
 
-import com.SistemLoja.SistemaLoja.Entity.ProdutoEntity;
-import com.SistemLoja.SistemaLoja.Service.ProdutoService;
 import java.math.BigDecimal;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,13 +13,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.SistemLoja.SistemaLoja.Entity.ProdutoEntity;
+import com.SistemLoja.SistemaLoja.Service.ProdutoService;
 
 @RestController
 @RequestMapping("/produto")
 @CrossOrigin(
-    origins = { "http://localhost:3000", "http://192.168.0.19:3000" },
+    origins = { "http://localhost:3000", "http://192.168.0.19:3000" , "http://10.51.67.19:3000/"},
     allowCredentials = "true",
     methods = {
         RequestMethod.GET,
