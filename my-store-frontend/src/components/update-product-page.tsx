@@ -88,7 +88,7 @@ export default function UpdateProductPage() {
         try {
             // URL ATUALIZADA para buscar um produto por ID
             const resp = await authService.makeAuthenticatedRequest(
-                `http://192.168.0.19:8090/produto/public/produtos/${productId}`,
+                `http://172.18.0.1:8090/produto/public/produtos/${productId}`,
                 { method: "GET" }
             );
 
@@ -135,7 +135,7 @@ export default function UpdateProductPage() {
             // Nota: O endpoint parece específico para quantidade, mas o formulário envia todos os dados.
             // O backend deve estar preparado para lidar com o corpo da requisição completo.
             const resp = await authService.makeAuthenticatedRequest(
-                `http://192.168.0.19:8090/produto/${formData.id}/updateQuantidade`,
+                `http://172.18.0.1:8090/produto/${formData.id}/updateQuantidade`,
                 {
                     method: "PUT",
                     body: JSON.stringify(formData),
