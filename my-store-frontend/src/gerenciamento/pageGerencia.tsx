@@ -6,11 +6,16 @@ import { Button } from "@/gerenciamento/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/gerenciamento/ui/card";
 import { Package, Users, UserCircle, ArrowLeft } from "lucide-react";
 
-import Gerenciamento from "@/gerenciamento/pageGerencia";
-import MenuLoja from "@/Loja/pageLoja";
-import LoginFunc from "@/gerenciamento/login-funcionario";
+/*
+const MenuProductsPage = () => <div className="bg-white p-6 rounded-lg shadow-md"><h2 className="text-2xl font-semibold">Página de Produtos</h2></div>;
+const MenuEmployeePage = () => <div className="bg-white p-6 rounded-lg shadow-md"><h2 className="text-2xl font-semibold">Página de Funcionários</h2></div>;
+const MenuClientPage = () => <div className="bg-white p-6 rounded-lg shadow-md"><h2 className="text-2xl font-semibold">Página de Clientes</h2></div>;
+*/
+import MenuProductsPage from "@/gerenciamento/products/menu-products";
+import MenuEmployeePage from "@/gerenciamento/employee/menu-employee";
+import MenuClientPage from "@/gerenciamento/client/menu-client";
 
-export default function Page() {
+export default function Gerenciamento() {
     const [currentPage, setCurrentPage] = useState("menu");
 
     // Botão de Voltar reutilizável
@@ -24,27 +29,27 @@ export default function Page() {
     // Componente para o Menu Principal
     const MainMenu = () => (
         <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-800">Seja bem vindo a Loja</h1>
-            <p className="text-lg text-gray-500 mt-2 mb-10">Selecione o botão para comprar ou fazer login como funcionário.</p>
+            <h1 className="text-4xl font-bold text-gray-800">Sistema de Gerenciamento</h1>
+            <p className="text-lg text-gray-500 mt-2 mb-10">Selecione uma área para gerenciar.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {/* Card de Produtos */}
                 <Card 
-                    onClick={() => setCurrentPage("Loja")} 
+                    onClick={() => setCurrentPage("Products")} 
                     className="cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-blue-500"
                 >
                     <CardHeader className="items-center text-center">
                         <div className="p-4 bg-blue-100 rounded-full mb-4 group-hover:bg-blue-500 transition-colors duration-300">
                             <Package className="h-10 w-10 text-blue-600 group-hover:text-white transition-colors duration-300" />
                         </div>
-                        <CardTitle className="text-xl font-semibold text-gray-800">Loja</CardTitle>
-                        <CardDescription className="text-gray-500">Comprar e conferir o catálogo de produtos</CardDescription>
+                        <CardTitle className="text-xl font-semibold text-gray-800">Produtos</CardTitle>
+                        <CardDescription className="text-gray-500">Gerenciar estoque e itens</CardDescription>
                     </CardHeader>
                 </Card>
 
                 {/* Card de Funcionários */}
                 <Card 
-                    onClick={() => setCurrentPage("Admin")} 
+                    onClick={() => setCurrentPage("Employees")} 
                     className="cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-green-500"
                 >
                     <CardHeader className="items-center text-center">
@@ -52,10 +57,23 @@ export default function Page() {
                             <Users className="h-10 w-10 text-green-600 group-hover:text-white transition-colors duration-300" />
                         </div>
                         <CardTitle className="text-xl font-semibold text-gray-800">Funcionários</CardTitle>
-                        <CardDescription className="text-gray-500">Gerenciamento da loja</CardDescription>
+                        <CardDescription className="text-gray-500">Gerenciar equipe e permissões</CardDescription>
                     </CardHeader>
                 </Card>
 
+                {/* Card de Clientes */}
+                <Card 
+                    onClick={() => setCurrentPage("Clients")} 
+                    className="cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-purple-500"
+                >
+                    <CardHeader className="items-center text-center">
+                        <div className="p-4 bg-purple-100 rounded-full mb-4 group-hover:bg-purple-500 transition-colors duration-300">
+                            <UserCircle className="h-10 w-10 text-purple-600 group-hover:text-white transition-colors duration-300" />
+                        </div>
+                        <CardTitle className="text-xl font-semibold text-gray-800">Clientes</CardTitle>
+                        <CardDescription className="text-gray-500">Gerenciar base de clientes</CardDescription>
+                    </CardHeader>
+                </Card>
             </div>
         </div>
     );
@@ -67,7 +85,7 @@ export default function Page() {
                 return (
                     <div>
                         <BackButton />
-                        <Gerenciamento />
+                        <MenuProductsPage />
                     </div>
                 );
             case "Employees":

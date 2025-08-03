@@ -1,6 +1,7 @@
-//revisar esse cara aqui 
+"use client";
 
-import React, { useState, useRef } from "react";
+import type React from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Package, CheckCircle, AlertCircle } from "lucide-react";
+import { authService } from "@/components/jwt-token";
 
 interface ProductData {
   id: number;
@@ -22,135 +24,6 @@ interface ProductData {
   quantidade: number;
   marca: string;
 }
-
-// Auth service to handle JWT tokens properly
-class AuthService {
-  private token: string | null = null;
-  private isAuthenticating: boolean = false;
-  private loginPromise: Promise<string> | null = null;
-
-  async getValidToken(): Promise<string> {
-    // If we have a valid token in memory, use it
-    if (this.token && this.isTokenValid(this.token)) {
-      return this.token;
-    }
-
-    // Try to get token from localStorage (simulated for demo)
-    // In real app: const storedToken = localStorage.getItem("jwt_token");
-    const storedToken = null; // Simulated for Claude artifacts
-
-    if (storedToken && this.isTokenValid(storedToken)) {
-      this.token = storedToken;
-      return this.token;
-    }
-
-    // If no valid token, authenticate
-    return await this.authenticate();
-  }
-
-  private async authenticate(): Promise<string> {
-    // Prevent multiple simultaneous login attempts
-    if (this.loginPromise) {
-      return this.loginPromise;
-    }
-
-    this.loginPromise = this.performLogin();
-    
-    try {
-      const token = await this.loginPromise;
-      return token;
-    } finally {
-      this.loginPromise = null;
-    }
-  }
-
-  private async performLogin(): Promise<string> {
-    try {
-      const response = await fetch("http://192.168.0.19:8090/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "figas",
-          password: "1234",
-        }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Login failed: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      this.token = data.token;
-      
-      // In real app: localStorage.setItem("jwt_token", data.token);
-      console.log("Login successful!");
-      
-      return this.token;
-    } catch (error) {
-      console.error("Authentication error:", error);
-      throw new Error("Failed to authenticate. Please check your credentials.");
-    }
-  }
-
-  private isTokenValid(token: string): boolean {
-    if (!token) return false;
-    
-    try {
-      // Decode JWT payload to check expiration
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const currentTime = Date.now() / 1000;
-      
-      // Check if token expires in the next 5 minutes (buffer time)
-      return payload.exp > (currentTime + 300);
-    } catch (error) {
-      console.error("Token validation error:", error);
-      return false;
-    }
-  }
-
-  clearToken(): void {
-    this.token = null;
-    // In real app: localStorage.removeItem("jwt_token");
-  }
-
-  async makeAuthenticatedRequest(url: string, options: RequestInit = {}): Promise<Response> {
-    const token = await this.getValidToken();
-    
-    const authenticatedOptions: RequestInit = {
-      ...options,
-      headers: {
-        ...options.headers,
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    };
-
-    const response = await fetch(url, authenticatedOptions);
-    
-    // If unauthorized, clear token and retry once
-    if (response.status === 401) {
-      console.log("Token expired or invalid, refreshing...");
-      this.clearToken();
-      
-      const newToken = await this.getValidToken();
-      authenticatedOptions.headers = {
-        ...authenticatedOptions.headers,
-        "Authorization": `Bearer ${newToken}`,
-      };
-      
-      return fetch(url, authenticatedOptions);
-    }
-
-    return response;
-  }
-}
-
-// Create singleton instance
-const authService = new AuthService();
 
 export default function AddProductPage() {
   const [formData, setFormData] = useState<ProductData>({
@@ -168,12 +41,11 @@ export default function AddProductPage() {
     text: string;
   } | null>(null);
 
-  // Prevent multiple simultaneous submissions
+  // Usar uma referência para evitar envios múltiplos
   const isSubmitting = useRef(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -185,17 +57,14 @@ export default function AddProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Prevent multiple simultaneous submissions
-    if (isSubmitting.current) {
-      return;
-    }
+    if (isSubmitting.current) return; // Previne clique duplo
 
     isSubmitting.current = true;
     setIsLoading(true);
     setMessage(null);
 
     try {
+      // 3. Use o authService para fazer a requisição!
       const response = await authService.makeAuthenticatedRequest(
         "http://192.168.0.19:8090/produto/adicionarProduto",
         {
@@ -205,18 +74,17 @@ export default function AddProductPage() {
       );
 
       if (!response.ok) {
+        // A sua classe AuthService já tentou renovar o token se deu 401.
+        // Se ainda não deu certo, o erro é outro.
         const errorText = await response.text();
-        throw new Error(`Server error: ${response.status} - ${errorText || response.statusText}`);
+        throw new Error(`Erro no servidor: ${response.status} - ${errorText || response.statusText}`);
       }
 
-      await response.json(); // Parse response to ensure it's valid JSON
+      await response.json();
 
-      setMessage({ 
-        type: "success", 
-        text: "Produto adicionado com sucesso!" 
-      });
+      setMessage({ type: "success", text: "Produto adicionado com sucesso!" });
 
-      // Reset form on success
+      // Resetar o formulário
       setFormData({
         id: 0,
         nome: "",
@@ -227,45 +95,23 @@ export default function AddProductPage() {
       });
 
     } catch (error) {
-      console.error("Error adding product:", error);
-      
-      let errorMessage = "Erro ao adicionar produto";
-      if (error instanceof Error) {
-        if (error.message.includes("authenticate")) {
-          errorMessage = "Erro de autenticação. Tente novamente.";
-        } else if (error.message.includes("Server error")) {
-          errorMessage = error.message;
-        } else {
-          errorMessage = error.message;
-        }
-      }
-
+      console.error("Erro ao adicionar produto:", error);
       setMessage({
         type: "error",
-        text: errorMessage,
+        text: error instanceof Error ? error.message : "Ocorreu um erro desconhecido",
       });
     } finally {
       setIsLoading(false);
       isSubmitting.current = false;
     }
   };
+  
 
-  const handleClearForm = () => {
-    setFormData({
-      id: 0,
-      nome: "",
-      categoria: "",
-      price: 0,
-      quantidade: 0,
-      marca: "",
-    });
-    setMessage(null);
-  };
 
   const isFormValid =
-    formData.nome.trim() &&
-    formData.categoria.trim() &&
-    formData.marca.trim() &&
+    formData.nome &&
+    formData.categoria &&
+    formData.marca &&
     formData.price > 0 &&
     formData.quantidade > 0;
 
@@ -286,11 +132,7 @@ export default function AddProductPage() {
           <CardContent>
             {message && (
               <Alert
-                className={`mb-6 ${
-                  message.type === "success" 
-                    ? "border-green-200 bg-green-50" 
-                    : "border-red-200 bg-red-50"
-                }`}
+                className={`mb-6 ${message.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}
               >
                 {message.type === "success" ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
@@ -309,7 +151,7 @@ export default function AddProductPage() {
               </Alert>
             )}
 
-            <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="nome">Nome do Produto *</Label>
@@ -320,7 +162,7 @@ export default function AddProductPage() {
                     value={formData.nome}
                     onChange={handleInputChange}
                     placeholder="Ex: Notebook Dell Inspiron 15"
-                    disabled={isLoading}
+                    required
                     className="w-full"
                   />
                 </div>
@@ -334,7 +176,7 @@ export default function AddProductPage() {
                     value={formData.marca}
                     onChange={handleInputChange}
                     placeholder="Ex: Dell"
-                    disabled={isLoading}
+                    required
                     className="w-full"
                   />
                 </div>
@@ -349,7 +191,7 @@ export default function AddProductPage() {
                   value={formData.categoria}
                   onChange={handleInputChange}
                   placeholder="Ex: Informática"
-                  disabled={isLoading}
+                  required
                   className="w-full"
                 />
               </div>
@@ -362,11 +204,11 @@ export default function AddProductPage() {
                     name="price"
                     type="number"
                     step="0.01"
-                    min="0"
+                    min="0.01"
                     value={formData.price || ""}
                     onChange={handleInputChange}
                     placeholder="0.00"
-                    disabled={isLoading}
+                    required
                     className="w-full"
                   />
                 </div>
@@ -381,7 +223,7 @@ export default function AddProductPage() {
                     value={formData.quantidade || ""}
                     onChange={handleInputChange}
                     placeholder="0"
-                    disabled={isLoading}
+                    required
                     className="w-full"
                   />
                 </div>
@@ -389,9 +231,9 @@ export default function AddProductPage() {
 
               <div className="flex gap-4 pt-4">
                 <Button
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={!isFormValid || isLoading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
                   {isLoading ? (
                     <>
@@ -406,14 +248,23 @@ export default function AddProductPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={handleClearForm}
+                  onClick={() => {
+                    setFormData({
+                      id: 0,
+                      nome: "",
+                      categoria: "",
+                      price: 0,
+                      quantidade: 0,
+                      marca: "",
+                    });
+                    setMessage(null);
+                  }}
                   disabled={isLoading}
-                  className="disabled:opacity-50"
                 >
                   Limpar
                 </Button>
               </div>
-            </div>
+            </form>
           </CardContent>
         </Card>
       </div>
