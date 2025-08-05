@@ -58,7 +58,93 @@ public class PaymentsService {
         return payment;
     }
 
-    
+    public PaymentEntity createEthPayment(String userName , int userId , BigDecimal amount ){
+
+        String paymentEthqr = paymentQr.createEthQrCode(userName, userId);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        PaymentEntity paymentEth = createPaymentEntity("PENDING", 
+        "ETH",
+        amount,
+        now,
+        null,
+        paymentEthqr
+        );
+
+        return createPayment(paymentEth);
+
+    }
+
+    public PaymentEntity createBtcPayment(String userName , int userId , BigDecimal amount ){
+
+        String paymentBtcqr = paymentQr.generateBtcQrCode( userName, userId);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        PaymentEntity paymentBtc = createPaymentEntity("PENDING", 
+        "BTC",
+        amount,
+        now,
+        null,
+        paymentBtcqr
+        );
+
+        return createPayment(paymentBtc);
+
+    }
+
+    public PaymentEntity createPixPayment(float valor ){
+
+        String paymentPixqr = paymentQr.createPixQrCode(valor);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        PaymentEntity paymentPix = createPaymentEntity("PENDING", 
+        "PIX",
+        BigDecimal.valueOf(valor),
+        now,
+        null,
+        paymentPixqr
+        );
+
+        return createPayment(paymentPix);
+
+    }
+
+    public void updatePaymentStatus(int paymentID, String status) {
+        PaymentEntity payment = paymentsDAO.findById(paymentID);
+        if (payment == null) {
+            System.err.println("Payment not found with id: " + paymentID);
+            return;
+        }
+        payment.setStatus(status);
+        payment.setUpdatedAt(LocalDateTime.now());
+        paymentsDAO.updatePayment(payment);
+    }
+
+    public void updatePaymentAmount(int paymentID, BigDecimal amount) {
+        PaymentEntity payment = paymentsDAO.findById(paymentID);
+        if (payment == null) {
+            System.err.println("Payment not found with id: " + paymentID);
+            return;
+        }
+        payment.setAmount(amount);
+        payment.setUpdatedAt(LocalDateTime.now());
+        paymentsDAO.updatePayment(payment);
+    }
+
+    public void updatePaymentQrCode(int paymentID, String qrCode) {
+        PaymentEntity payment = paymentsDAO.findById(paymentID);
+        if (payment == null) {
+            System.err.println("Payment not found with id: " + paymentID);
+            return;
+        }
+        payment.setPublicQrcode(qrCode);
+        payment.setUpdatedAt(LocalDateTime.now());
+        paymentsDAO.updatePayment(payment);
+    }
+
 
     public PaymentEntity createPayment(PaymentEntity payment) {
         return paymentsDAO.save(payment);
