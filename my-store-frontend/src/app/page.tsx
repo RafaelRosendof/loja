@@ -2,13 +2,13 @@
 
 "use client";
 import React, { useState } from "react";
-import { Button } from "@/gerenciamento/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/gerenciamento/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, Users, UserCircle, ArrowLeft } from "lucide-react";
 
-import Gerenciamento from "@/gerenciamento/pageGerencia";
-import MenuLoja from "@/Loja/pageLoja";
-import LoginFunc from "@/gerenciamento/login-funcionario";
+import Gerenciamento from "@/components/client/menu-client";
+import MenuEmployeePage from "@/components/employee/menu-employee";
+import MenuClientPage from "@/components/client/menu-client";
 
 export default function Page() {
     const [currentPage, setCurrentPage] = useState("menu");
@@ -56,6 +56,19 @@ export default function Page() {
                     </CardHeader>
                 </Card>
 
+                {/* Card de Clientes */}
+                <Card 
+                    onClick={() => setCurrentPage("Clients")} 
+                    className="cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-green-500"
+                >
+                    <CardHeader className="items-center text-center">
+                        <div className="p-4 bg-green-100 rounded-full mb-4 group-hover:bg-green-500 transition-colors duration-300">
+                            <Users className="h-10 w-10 text-green-600 group-hover:text-white transition-colors duration-300" />
+                        </div>
+                        <CardTitle className="text-xl font-semibold text-gray-800">Clientes</CardTitle>
+                        <CardDescription className="text-gray-500">Gerenciamento de clientes</CardDescription>
+                    </CardHeader>
+                </Card>
             </div>
         </div>
     );

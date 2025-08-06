@@ -22,29 +22,6 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 @Service
 public class PaymentQr {
     
-    /*
-     * This class is gonna be responsible for generating payments requests for QR codes and for creating URL's for the payments
-     * 
-     * Etherium 
-     * Bitcoin
-     * Pix
-     * 
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-08-01T22:19:35.699-03:00 ERROR 3337934 --- [SistemaLoja] [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Parameter 1 of constructor in com.SistemLoja.SistemaLoja.Service.PaymentsService required a bean of type 'com.SistemLoja.SistemaLoja.Aux.PaymentQr' that could not be found.
-
-
-Action:
-
-Consider defining a bean of type 'com.SistemLoja.SistemaLoja.Aux.PaymentQr' in your configuration.
-     */
 
     public PaymentQr() {
         // Constructor
