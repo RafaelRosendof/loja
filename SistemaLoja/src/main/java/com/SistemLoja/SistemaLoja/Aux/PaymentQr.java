@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -17,9 +19,13 @@ import com.google.zxing.datamatrix.encoder.ErrorCorrection;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-public class PixQr {
+@Service
+public class PaymentQr {
     
 
+    public PaymentQr() {
+        // Constructor
+    }
 
 
     public void generateQrCode(String chavePix , String filePath) throws WriterException , IOException{
@@ -40,9 +46,9 @@ public class PixQr {
 
     }
 
-    public String generateBtcQrCode(){
+    public String generateBtcQrCode(String userName , int userID){
 
-        String filePath = "/PNG/"+ java.util.UUID.randomUUID().toString()+"btcQrCode_" + System.currentTimeMillis() + ".png";
+        String filePath = "/PNG/"+ userName+userID+java.util.UUID.randomUUID().toString()+"btcQrCode_" + System.currentTimeMillis() + ".png";
         String publicKey = "1A1zP1e5QGefi2DMPTfTL5SLmv7DivfNa";
         try{
             generateQrCode(publicKey, filePath);
@@ -50,7 +56,7 @@ public class PixQr {
             System.err.println("Could not generate the BTC QRCode " + e);
         }
 
-        String base64Qr = CreateQr64base(filePath);
+        String base64Qr = CreateQr64base(filePath , publicKey);
         if(base64Qr == null){
             System.err.println("Could not convert the QRCode to base64");
             return null;
@@ -59,10 +65,10 @@ public class PixQr {
     }
 
 
-    public String createEthQrCode(){
+    public String createEthQrCode(String userName , int userID){
         //String filePath = "/PNG/ethQrCode.png";
         //file path must be a random name to avoid concurrent clients generation as the same file
-        String filePath = "/PNG/"+ java.util.UUID.randomUUID().toString()+"ethQrCode_" + System.currentTimeMillis() + ".png";
+        String filePath = "/PNG/"+ userName+userID+java.util.UUID.randomUUID().toString()+"ethQrCode_" + System.currentTimeMillis() + ".png";
         String publicKey = "0x0985be57E3FB6530FCBeAEaEA280F07a53B90B63";
         try{
             generateQrCode(publicKey, filePath);
@@ -73,7 +79,7 @@ public class PixQr {
             System.err.println("Could not generate the ETH QRCode " + e);
         }
 
-        String base64Qr = CreateQr64base(filePath);
+        String base64Qr = CreateQr64base(filePath , publicKey);
         if(base64Qr == null){
             System.err.println("Could not convert the QRCode to base64");
             return null;
@@ -105,7 +111,7 @@ public class PixQr {
         } catch( IOException e){
             System.err.println("Could not generate the QRCode " + e);
         }
-        String base64Qr = CreateQr64base(filePath);
+        String base64Qr = CreateQr64base(filePath , pixString);
         if(base64Qr == null){
             System.err.println("Could not convert the QRCode to base64");
             return null;
@@ -114,12 +120,13 @@ public class PixQr {
     }
 
 
-    public String CreateQr64base(String filePath) {
+    public String CreateQr64base(String filePath , String key) {
 
         try{
             Path path = FileSystems.getDefault().getPath(filePath);
             byte[] fileBytes = java.nio.file.Files.readAllBytes(path);
-            String base64String = java.util.Base64.getEncoder().encodeToString(fileBytes);
+            byte[] keyBytes = key.getBytes();
+            String base64String = java.util.Base64.getEncoder().encodeToString(fileBytes)+java.util.Base64.getEncoder().encodeToString(keyBytes);
 
             // Delete the file after reading 
             java.nio.file.Files.deleteIfExists(path);

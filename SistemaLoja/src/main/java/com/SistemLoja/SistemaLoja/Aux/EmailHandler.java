@@ -33,4 +33,3 @@ public class EmailHandler {
 
     
 }
-//python src/main.py -c config/default_ch.yaml -g 5 && python src/main.py -c config/default_ch1.yaml -g 5 && python src/main.py -c config/default_ch2.yaml -g 5
