@@ -1,16 +1,12 @@
 package com.SistemLoja.SistemaLoja.Security;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -75,7 +71,8 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:3000",
             "http://192.168.0.19:3000",
-            "http://127.0.0.1:3000"
+            "http://127.0.0.1:3000",
+            "http://10.51.67.19:3000/"
         ));
         
         // Allow all HTTP methods

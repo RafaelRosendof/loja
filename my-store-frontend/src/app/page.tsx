@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, Users, UserCircle, ArrowLeft } from "lucide-react";
 
-import Gerenciamento from "@/components/client/menu-client";
+import MenuProductsPage from "@/components/products/menu-products";
 import MenuEmployeePage from "@/components/employee/menu-employee";
 import MenuClientPage from "@/components/client/menu-client";
 
@@ -30,7 +30,7 @@ export default function Page() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {/* Card de Produtos */}
                 <Card 
-                    onClick={() => setCurrentPage("Loja")} 
+                    onClick={() => setCurrentPage("Products")} 
                     className="cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-blue-500"
                 >
                     <CardHeader className="items-center text-center">
@@ -44,7 +44,7 @@ export default function Page() {
 
                 {/* Card de Funcionários */}
                 <Card 
-                    onClick={() => setCurrentPage("Admin")} 
+                    onClick={() => setCurrentPage("Employees")} 
                     className="cursor-pointer group hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-green-500"
                 >
                     <CardHeader className="items-center text-center">
@@ -80,7 +80,7 @@ export default function Page() {
                 return (
                     <div>
                         <BackButton />
-                        <Gerenciamento />
+                        <MenuProductsPage/>
                     </div>
                 );
             case "Employees":

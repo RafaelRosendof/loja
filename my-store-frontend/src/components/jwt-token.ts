@@ -63,7 +63,8 @@ class AuthService {
     private async performLogin(): Promise<string> {
 
         try{
-            const resp = await fetch("http://192.168.0.19:8090/login" , {
+            //const resp = await fetch("http://192.168.0.19:8090/login" , {
+              const resp = await fetch("http://172.18.0.1:8090/login" , {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

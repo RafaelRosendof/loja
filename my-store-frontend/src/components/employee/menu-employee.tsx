@@ -6,9 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Package, PlusCircle, Trash2, Search, Edit, ArrowLeft } from "lucide-react";
 
 // Import your page components
-import AddProductPage from "@/components/employee/add-employee";
-// Assuming you have these other components created in your components folder
-// If not, I will provide simple placeholders for them.
+import AddProductPage from "@/components/employee/add-employee.tsx";
 import DeleteProductPage from "@/components/employee/delete-employee";
 import FindProductPage from "@/components/employee/find-employee";
 import ModifyProductPage from "@/components/employee/update-employee";
