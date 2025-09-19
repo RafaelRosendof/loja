@@ -15,3 +15,5 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) 
+
+<img width="1443" height="1036" alt="Screenshot from 2025-09-19 09-04-07" src="https://github.com/user-attachments/assets/374f1562-8854-4577-9bf3-926a075f8cce" />
